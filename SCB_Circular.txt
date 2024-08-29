@@ -1,0 +1,182 @@
+FINISH
+/CLEAR,NOSTART  
+/CWD, 'C:\path\to\Mesh-Documents'
+/PREP7  
+
+PI=3.1415926535897932384626433832795
+
+
+Unit= 1
+R= 43.45/ Unit
+LEN_1 = 43.45*0.025/Unit
+LEN_2 = 43.45*0.41/Unit 
+LEN_3 = 20/Unit 
+ROT=90
+
+K,1,0,0,0
+LOCAL, 11,CYLIN,0,0,0,0,0,0
+
+CSYS,11
+CLOCAL,12,1,LEN_2,ROT,0,-ROT
+CSYS,12
+
+
+Z=0
+
+
+CSYS,11
+K,2,LEN_1,0
+K,3,LEN_1,180
+
+
+
+CSYS,12
+K,4,0,0
+K,5,LEN_1,0
+K,6,LEN_1,180
+
+
+
+
+CIRCLE,1,R,,,180
+
+
+K,10,LEN_1,90
+
+
+CSYS,0
+L,1,2
+L,3,1
+L,4,5
+L,6,4
+L,1,4
+L,3,6
+L,2,5
+
+
+L,2,7
+L,3,9
+
+
+CIRCLE,4,LEN_3,,,180
+CIRCLE,4,4*LEN_1,,,180
+LARC,5,10,4,LEN_1
+LARC,10,6,4,LEN_1
+L,5,14
+L,6,16
+L,14,11
+L,16,13
+L,4,10
+L,10,15
+L,15,12
+
+L,12,8
+
+AL,1,25,12,20,18,9,10
+AL,2,11,8,19,21,13,25
+
+
+
+AL,5,9,3,7
+AL,6,7,4,8
+
+AL,5,16,22
+AL,6,22,17
+
+AL,16,18,14,23
+AL,17,23,15,19
+
+AL,14,20,12,24
+AL,15,24,13,21
+
+
+
+
+
+
+
+!For plane-strain 2 and -stress with thickness 3 without 0
+ET, 1, PLANE182, 0, , 2, , , , 
+!R,1,1/ Unit, 
+
+ALLSEL,ALL
+LSEL,S,LINE,,1,2
+LESIZE,ALL,,,200,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,7,9,1
+LESIZE,ALL,,,250,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,10,11
+LESIZE,ALL,,,100,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,12,17
+LESIZE,ALL,,,60,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,20,24
+LESIZE,ALL,,,60,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,18,19
+LESIZE,ALL,,,25,1,1,
+
+
+ALLSEL,ALL
+LSEL,S,LINE,,23,23
+LESIZE,ALL,,,25,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,3,6
+LESIZE,ALL,,,14,1,1,
+
+ALLSEL,ALL
+LSEL,S,LINE,,22,22
+LESIZE,ALL,,,25,1,1,
+
+
+ALLSEL,ALL
+LSEL,S,LINE,,25,25
+LESIZE,ALL,,,20,1,1,
+
+
+ALLSEL,ALL
+AMESH,ALL
+
+CSYS,0
+ALLSEL,ALL
+*VGET,LOCX, NODE, ALL, LOC, X
+*VGET,LOCY, NODE, ALL, LOC, Y
+*VGET,nodes1, ELEM, ALL, NODE,1
+*VGET,nodes2, ELEM, ALL, NODE,2
+*VGET,nodes3, ELEM, ALL, NODE,3
+*VGET,nodes4, ELEM, ALL, NODE,4
+
+CSYS,11
+ALLSEL,ALL
+*VGET,LOCR, NODE, ALL, LOC, X
+*VGET,LOCT, NODE, ALL, LOC, Y
+
+*DO,i,1,2
+*cfopen,LOC_RT,csv                !Write results to *.csv 
+*VWRITE,LOCT(1),',',LOCR(1) 
+(F,A,F)
+*CFCLOS 
+*ENDDO
+
+
+*DO,i,1,2
+*cfopen,NODES_Circ,csv                !Write results to *.csv 
+*VWRITE,nodes1(1),',',nodes2(1),',',nodes3(1),',',nodes4(1)  
+(F,A,F,A,F,A,F)
+*CFCLOS 
+*ENDDO
+
+*DO,i,1,2
+*cfopen,LOC_Circ,csv                !Write results to *.csv 
+*VWRITE,LOCX(1),',',LOCY(1) 
+(F,A,F)
+*CFCLOS 
+*ENDDO
